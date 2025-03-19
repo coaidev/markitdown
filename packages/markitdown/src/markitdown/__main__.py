@@ -92,6 +92,13 @@ def main():
     )
 
     parser.add_argument(
+        "-k",
+        "--key",
+        type=str,
+        help="Document Intelligence API Key. Required if using Document Intelligence with API Key authentication.",
+    )
+
+    parser.add_argument(
         "-p",
         "--use-plugins",
         action="store_true",
@@ -175,7 +182,9 @@ def main():
             _exit_with_error("Filename is required when using Document Intelligence.")
 
         markitdown = MarkItDown(
-            enable_plugins=args.use_plugins, docintel_endpoint=args.endpoint
+            enable_plugins=args.use_plugins, 
+            docintel_endpoint=args.endpoint,
+            docintel_key=args.key
         )
     else:
         markitdown = MarkItDown(enable_plugins=args.use_plugins)

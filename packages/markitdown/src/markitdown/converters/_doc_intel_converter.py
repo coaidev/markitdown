@@ -1,12 +1,14 @@
 import sys
 import re
 
-from typing import BinaryIO, Any, List
+from typing import BinaryIO, Any, List, Optional
 
 from ._html_converter import HtmlConverter
 from .._base_converter import DocumentConverter, DocumentConverterResult
 from .._stream_info import StreamInfo
 from .._exceptions import MissingDependencyException, MISSING_DEPENDENCY_MESSAGE
+
+from azure.core.credentials import AzureKeyCredential
 
 # Try loading optional (but in this case, required) dependencies
 # Save reporting of any exceptions for later
@@ -70,6 +72,7 @@ class DocumentIntelligenceConverter(DocumentConverter):
         self,
         *,
         endpoint: str,
+        api_key: Optional[str] = None,
         api_version: str = "2024-07-31-preview",
     ):
         super().__init__()
@@ -88,11 +91,20 @@ class DocumentIntelligenceConverter(DocumentConverter):
 
         self.endpoint = endpoint
         self.api_version = api_version
-        self.doc_intel_client = DocumentIntelligenceClient(
-            endpoint=self.endpoint,
-            api_version=self.api_version,
-            credential=DefaultAzureCredential(),
-        )
+        
+        # use api_key if provided, otherwise use DefaultAzureCredential
+        if api_key:
+            self.doc_intel_client = DocumentIntelligenceClient(
+                endpoint=self.endpoint,
+                api_version=self.api_version,
+                credential=AzureKeyCredential(api_key),
+            )
+        else:
+            self.doc_intel_client = DocumentIntelligenceClient(
+                endpoint=self.endpoint,
+                api_version=self.api_version,
+                credential=DefaultAzureCredential(),
+            )
 
     def accepts(
         self,

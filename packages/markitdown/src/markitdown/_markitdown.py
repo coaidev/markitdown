@@ -196,9 +196,13 @@ class MarkItDown:
 
             # Register Document Intelligence converter at the top of the stack if endpoint is provided
             docintel_endpoint = kwargs.get("docintel_endpoint")
+            docintel_key = kwargs.get("docintel_key")
             if docintel_endpoint is not None:
                 self.register_converter(
-                    DocumentIntelligenceConverter(endpoint=docintel_endpoint)
+                    DocumentIntelligenceConverter(
+                        endpoint=docintel_endpoint,
+                        api_key=docintel_key
+                    )
                 )
 
             self._builtins_enabled = True
